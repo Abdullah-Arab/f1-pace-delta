@@ -11,7 +11,7 @@ import {
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import { getTeammatePaceDelta } from './paceDelta.service';
-import type { TeamDelta } from './paceDelta.types';
+import type { PaceDeltaResult } from './paceDelta.types';
 
 ChartJS.register(
   CategoryScale,
@@ -23,7 +23,7 @@ ChartJS.register(
 );
 
 export const PaceDeltaChart: React.FC = () => {
-  const [data, setData] = useState<TeamDelta[]>([]);
+  const [result, setResult] = useState<PaceDeltaResult | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,11 +34,15 @@ export const PaceDeltaChart: React.FC = () => {
       try {
         setIsLoading(true);
         setError(null);
-        const result = await getTeammatePaceDelta();
+        const paceResult = await getTeammatePaceDelta();
         
         if (isMounted) {
-          const sortedResult = [...result].sort((a, b) => b.delta - a.delta);
-          setData(sortedResult);
+          if (paceResult) {
+            paceResult.deltas.sort((a, b) => b.delta - a.delta);
+            setResult(paceResult);
+          } else {
+            setResult(null);
+          }
         }
       } catch (err) {
         if (isMounted) {
@@ -75,13 +79,15 @@ export const PaceDeltaChart: React.FC = () => {
     );
   }
 
-  if (data.length === 0) {
+  if (!result || result.deltas.length === 0) {
     return (
       <div style={styles.stateContainer}>
         <p style={styles.stateText}>No data available</p>
       </div>
     );
   }
+
+  const { session, deltas: data } = result;
 
   const chartData = {
     labels: data.map((d) => d.team),
@@ -151,7 +157,9 @@ export const PaceDeltaChart: React.FC = () => {
   return (
     <div style={styles.container}>
       <header style={styles.header}>
-        <h2 style={styles.title}>Qualifying Telemetry</h2>
+        <h2 style={styles.title}>
+          Qualifying Telemetry <span style={styles.inlineSession}>({session.country_name} {session.year})</span>
+        </h2>
         <p style={styles.subtitle}>Analyzing the raw performance gap across teammates ({data.length} teams plotted)</p>
       </header>
       <div style={styles.chartWrapper}>
@@ -182,6 +190,12 @@ const styles = {
     fontWeight: '700',
     color: '#111827',
     letterSpacing: '-0.3px',
+  },
+  inlineSession: {
+    fontSize: '20px',
+    fontWeight: '500',
+    color: '#6b7280',
+    marginLeft: '6px',
   },
   subtitle: {
     margin: 0,

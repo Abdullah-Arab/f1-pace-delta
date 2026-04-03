@@ -1,12 +1,12 @@
 import { getSessions, getLaps, getDrivers } from '../../api/openf1';
-import type { TeamDelta } from './paceDelta.types';
+import type { PaceDeltaResult } from './paceDelta.types';
 import { getFastestLapsByDriver, groupByTeam, computeTeamDeltas } from './paceDelta.utils';
 
-export async function getTeammatePaceDelta(): Promise<TeamDelta[]> {
+export async function getTeammatePaceDelta(): Promise<PaceDeltaResult | null> {
   const sessions = await getSessions({ session_name: 'Qualifying' });
   
   if (!sessions || sessions.length === 0) {
-    return [];
+    return null;
   }
 
   const now = Date.now();
@@ -53,7 +53,10 @@ export async function getTeammatePaceDelta(): Promise<TeamDelta[]> {
 
       // If we got valid detlas, return them. Otherwise, continue searching
       if (teamDeltas.length > 0) {
-        return teamDeltas;
+        return {
+          session,
+          deltas: teamDeltas,
+        };
       }
     } catch (error: any) {
       // Re-throw if it's a 500 or other unexpected error
@@ -61,5 +64,5 @@ export async function getTeammatePaceDelta(): Promise<TeamDelta[]> {
     }
   }
 
-  return [];
+  return null;
 }

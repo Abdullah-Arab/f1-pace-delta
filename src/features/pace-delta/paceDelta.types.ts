@@ -53,3 +53,8 @@ export type TeamDelta = {
   slowerLap: number;
   delta: number;
 };
+
+export interface PaceDeltaResult {
+  session: Session;
+  deltas: TeamDelta[];
+}
