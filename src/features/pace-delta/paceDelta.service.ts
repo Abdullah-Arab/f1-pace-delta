@@ -23,10 +23,12 @@ export async function getTeammatePaceDelta(): Promise<TeamDelta[]> {
     try {
       const sessionKey = session.session_key;
 
-      const [laps, drivers] = await Promise.all([
-        getLaps(sessionKey),
-        getDrivers(sessionKey)
-      ]);
+      // Make requests sequentially to avoid immediately triggering the 3 req/sec rate limit
+      const laps = await getLaps(sessionKey);
+      const drivers = await getDrivers(sessionKey);
+
+      // Add a small artificial delay so tight loop iterations don't bombard the API
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
       if (!laps || laps.length === 0 || !drivers || drivers.length === 0) {
         continue; // Skip to the next older session
