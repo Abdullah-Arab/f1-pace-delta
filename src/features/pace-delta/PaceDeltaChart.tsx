@@ -89,8 +89,8 @@ export const PaceDeltaChart: React.FC = () => {
       {
         label: 'Delta (seconds)',
         data: data.map((d) => d.delta),
-        backgroundColor: '#4b5563', // Neutral gray
-        hoverBackgroundColor: '#1f2937', // Darker gray on hover
+        backgroundColor: '#e10600', // vibrant F1 Red to keep it UI friendly
+        hoverBackgroundColor: '#c80500',
         borderRadius: 4,
       },
     ],
@@ -105,7 +105,9 @@ export const PaceDeltaChart: React.FC = () => {
         display: false,
       },
       tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        backgroundColor: 'rgba(17, 24, 39, 0.9)',
+        titleColor: '#ffffff',
+        bodyColor: '#f9fafb',
         titleFont: { size: 14, weight: 'bold' },
         bodyFont: { size: 13 },
         padding: 12,
@@ -122,21 +124,24 @@ export const PaceDeltaChart: React.FC = () => {
         beginAtZero: true,
         title: {
           display: true,
-          text: 'Delta (s)',
+          text: 'Delta (Seconds)',
           color: '#6b7280',
+          font: { size: 13, weight: 500 }
         },
         grid: {
           color: '#e5e7eb',
         },
+        ticks: { color: '#4b5563' },
       },
       y: {
         grid: {
           display: false,
         },
         ticks: {
-          color: '#374151',
+          color: '#111827',
           font: {
             weight: 'bold',
+            size: 13
           },
         },
       },
@@ -146,8 +151,8 @@ export const PaceDeltaChart: React.FC = () => {
   return (
     <div style={styles.container}>
       <header style={styles.header}>
-        <h2 style={styles.title}>Teammate Pace Delta – Latest Qualifying</h2>
-        <p style={styles.subtitle}>Gap between fastest and slowest driver per team</p>
+        <h2 style={styles.title}>Qualifying Telemetry</h2>
+        <p style={styles.subtitle}>Analyzing the raw performance gap across teammates ({data.length} teams plotted)</p>
       </header>
       <div style={styles.chartWrapper}>
         <Bar data={chartData} options={chartOptions} />
@@ -158,50 +163,54 @@ export const PaceDeltaChart: React.FC = () => {
 
 const styles = {
   container: {
-    fontFamily: 'system-ui, -apple-system, sans-serif',
     backgroundColor: '#ffffff',
     border: '1px solid #e5e7eb',
-    borderRadius: '8px',
-    padding: '24px',
-    maxWidth: '800px',
+    borderRadius: '12px',
+    padding: '32px',
+    maxWidth: '900px',
     margin: '0 auto',
-    boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+    boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)',
   },
   header: {
-    marginBottom: '20px',
+    marginBottom: '24px',
+    borderBottom: '1px solid #e5e7eb',
+    paddingBottom: '16px',
   },
   title: {
-    margin: '0 0 4px 0',
-    fontSize: '18px',
-    fontWeight: '600',
+    margin: '0 0 6px 0',
+    fontSize: '22px',
+    fontWeight: '700',
     color: '#111827',
+    letterSpacing: '-0.3px',
   },
   subtitle: {
     margin: 0,
-    fontSize: '14px',
-    color: '#6b7280',
+    fontSize: '15px',
+    color: '#4b5563',
   },
   chartWrapper: {
     position: 'relative' as const,
-    height: '400px',
+    height: '450px',
     width: '100%',
   },
   stateContainer: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '200px',
+    height: '300px',
     backgroundColor: '#f9fafb',
-    borderRadius: '8px',
-    border: '1px dashed #e5e7eb',
+    borderRadius: '12px',
+    border: '1px dashed #d1d5db',
+    maxWidth: '900px',
+    margin: '0 auto',
   },
   stateText: {
-    color: '#6b7280',
-    fontSize: '15px',
+    color: '#4b5563',
+    fontSize: '16px',
   },
   errorText: {
     color: '#ef4444',
-    fontSize: '15px',
+    fontSize: '16px',
     fontWeight: '500',
   },
 };
