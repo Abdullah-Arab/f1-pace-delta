@@ -22,6 +22,13 @@ export async function apiClient<T>(
   });
 
   if (!response.ok) {
+    if (response.status === 404) {
+      // The OpenF1 API returns 404 for "No results found."
+      // Returning array/null equivalent here based on generic T is tricky,
+      // but returning an empty array avoids breaking iterators if T is an array type.
+      return [] as unknown as T;
+    }
+    
     throw new ApiError(
       response.status,
       `API Error: ${response.status} ${response.statusText}`
